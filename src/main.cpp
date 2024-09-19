@@ -18,6 +18,7 @@ public:
   ~LTexture();
   bool loadFromFile(std::string path);
   void free();
+  void setColor(Uint8 r, Uint8 g, Uint8 b);
   void render(int x, int y, SDL_Rect *clip = NULL);
   int getWidth();
   int getHeight();
@@ -49,6 +50,7 @@ int main(int argc, char *args[]) {
     return -1;
   }
 
+  gSpriteSheet.setColor(255, 128, 128);
   SDL_Event e;
   bool quit = false;
   while (quit == false) {
@@ -199,6 +201,10 @@ void LTexture::free() {
     mHeight = 0;
     mWidth = 0;
   }
+}
+
+void LTexture::setColor(Uint8 r, Uint8 g, Uint8 b) {
+  SDL_SetTextureColorMod(mTexture, r, g, b);
 }
 
 void LTexture::render(int x, int y, SDL_Rect *clip) {
