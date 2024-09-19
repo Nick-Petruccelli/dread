@@ -3,6 +3,7 @@
 #include <SDL2/SDL_events.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_pixels.h>
+#include <SDL2/SDL_render.h>
 #include <SDL2/SDL_surface.h>
 #include <SDL2/SDL_video.h>
 #include <stdio.h>
@@ -15,10 +16,13 @@ bool init();
 bool loadMedia();
 bool close();
 SDL_Surface *loadSurface(std::string path);
+SDL_Texture *loadTexture(std::string path);
 
 SDL_Window *gWindow = NULL;
+SDL_Renderer *gRenderer = NULL;
 SDL_Surface *gSurface = NULL;
 SDL_Surface *gCurrentSurface = NULL;
+SDL_Texture *gTexture = NULL;
 
 enum KeyPressSurfaces {
   KEY_PRESS_SURFACE_DEFAULT,
@@ -73,8 +77,9 @@ int main(int argc, char *args[]) {
         }
       }
     }
-    SDL_BlitSurface(gCurrentSurface, NULL, gSurface, NULL);
-    SDL_UpdateWindowSurface(gWindow);
+    SDL_RenderClear(gRenderer);
+    SDL_RenderCopy(gRenderer, gTexture, NULL, NULL);
+    SDL_RenderPresent(gRenderer);
   }
 
   return 0;
@@ -94,6 +99,13 @@ bool init() {
     return false;
   }
 
+  gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
+  if (gRenderer == NULL) {
+    printf("SDL::Failed to create renderer\n%s\n", SDL_GetError());
+    return false;
+  }
+  SDL_SetRenderDrawColor(gRenderer, 0xff, 0xff, 0xff, 0xff);
+
   int imgFlags = IMG_INIT_PNG;
   if (!(IMG_Init(imgFlags) & imgFlags)) {
     printf("ERROR::SDL::Failed to init image loading\n%s\n", SDL_GetError());
@@ -106,6 +118,12 @@ bool init() {
 
 bool loadMedia() {
   bool success = true;
+
+  gTexture = loadTexture("assets/press.png");
+  if (gTexture == NULL) {
+    printf("Failed to load textrue");
+    success = false;
+  }
 
   gKeyPressSurfaces[KEY_PRESS_SURFACE_DEFAULT] =
       loadSurface("assets/press.png");
@@ -144,6 +162,19 @@ SDL_Surface *loadSurface(std::string path) {
   }
   surf = SDL_ConvertSurface(surf, gSurface->format, 0);
   return surf;
+}
+
+SDL_Texture *loadTexture(std::string path) {
+  SDL_Texture *tex = NULL;
+  SDL_Surface *surf = IMG_Load(path.c_str());
+  if (surf == NULL) {
+    printf("ERROR::SDL::Failed to load surface\n%s\n", SDL_GetError());
+  }
+  tex = SDL_CreateTextureFromSurface(gRenderer, surf);
+  if (tex == NULL) {
+    printf("ERROR::SDL::Failed to load texture\n%s\n", SDL_GetError());
+  }
+  return tex;
 }
 
 bool close() {
