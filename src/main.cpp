@@ -1,4 +1,5 @@
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_blendmode.h>
 #include <SDL2/SDL_error.h>
 #include <SDL2/SDL_events.h>
 #include <SDL2/SDL_image.h>
@@ -19,6 +20,8 @@ public:
   bool loadFromFile(std::string path);
   void free();
   void setColor(Uint8 r, Uint8 g, Uint8 b);
+  void setBlendMode(SDL_BlendMode blending);
+  void setAlpha(Uint8 a);
   void render(int x, int y, SDL_Rect *clip = NULL);
   int getWidth();
   int getHeight();
@@ -37,8 +40,8 @@ SDL_Texture *loadTexture(std::string path);
 
 SDL_Window *gWindow = NULL;
 SDL_Renderer *gRenderer = NULL;
-LTexture gSpriteSheet;
-SDL_Rect gSpriteClips[4];
+LTexture gFrontTexture;
+LTexture gBackTexture;
 
 int main(int argc, char *args[]) {
   if (!init()) {
@@ -50,19 +53,34 @@ int main(int argc, char *args[]) {
     return -1;
   }
 
-  gSpriteSheet.setColor(255, 128, 128);
   SDL_Event e;
   bool quit = false;
+  Uint8 alpha = 255;
   while (quit == false) {
     while (SDL_PollEvent(&e) != 0) {
       if (e.type == SDL_QUIT) {
         quit = true;
       }
+      if (e.type == SDL_KEYDOWN) {
+        if (e.key.keysym.sym == SDLK_w) {
+          if (alpha + 32 > 255) {
+            alpha = 255;
+          } else {
+            alpha += 32;
+          }
+        }
+        if (e.key.keysym.sym == SDLK_s) {
+          if (alpha - 32 < 0) {
+            alpha = 0;
+          } else {
+            alpha -= 32;
+          }
+        }
+      }
     }
-    gSpriteSheet.render(0, 0, &gSpriteClips[0]);
-    gSpriteSheet.render(380, 0, &gSpriteClips[1]);
-    gSpriteSheet.render(380, 200, &gSpriteClips[2]);
-    gSpriteSheet.render(0, 200, &gSpriteClips[3]);
+    gFrontTexture.setAlpha(alpha);
+    gBackTexture.render(0, 0);
+    gFrontTexture.render(0, 0);
     SDL_RenderPresent(gRenderer);
   }
 
@@ -103,29 +121,16 @@ bool init() {
 bool loadMedia() {
   bool success = true;
 
-  if (!gSpriteSheet.loadFromFile("assets/circles.png")) {
+  if (!gFrontTexture.loadFromFile("assets/front.png")) {
     printf("Failed to load spritesheet");
     return false;
   }
-  gSpriteClips[0].x = 0;
-  gSpriteClips[0].y = 0;
-  gSpriteClips[0].w = 100;
-  gSpriteClips[0].h = 100;
-
-  gSpriteClips[1].x = 100;
-  gSpriteClips[1].y = 0;
-  gSpriteClips[1].w = 100;
-  gSpriteClips[1].h = 100;
-
-  gSpriteClips[2].x = 100;
-  gSpriteClips[2].y = 100;
-  gSpriteClips[2].w = 100;
-  gSpriteClips[2].h = 100;
-
-  gSpriteClips[3].x = 0;
-  gSpriteClips[3].y = 100;
-  gSpriteClips[3].w = 100;
-  gSpriteClips[3].h = 100;
+  if (!gBackTexture.loadFromFile("assets/back.png")) {
+    printf("Failed to load spritesheet");
+    return false;
+  }
+  gFrontTexture.setBlendMode(SDL_BLENDMODE_BLEND);
+  gBackTexture.setBlendMode(SDL_BLENDMODE_BLEND);
 
   return success;
 }
@@ -153,7 +158,8 @@ SDL_Texture *loadTexture(std::string path) {
 }
 
 bool close() {
-  gSpriteSheet.free();
+  gFrontTexture.free();
+  gBackTexture.free();
   SDL_DestroyWindow(gWindow);
   gWindow = NULL;
   SDL_DestroyRenderer(gRenderer);
@@ -206,6 +212,12 @@ void LTexture::free() {
 void LTexture::setColor(Uint8 r, Uint8 g, Uint8 b) {
   SDL_SetTextureColorMod(mTexture, r, g, b);
 }
+
+void LTexture::setBlendMode(SDL_BlendMode blending) {
+  SDL_SetTextureBlendMode(mTexture, blending);
+}
+
+void LTexture::setAlpha(Uint8 a) { SDL_SetTextureAlphaMod(mTexture, a); }
 
 void LTexture::render(int x, int y, SDL_Rect *clip) {
   SDL_Rect displayRect = {x, y, mWidth, mHeight};
