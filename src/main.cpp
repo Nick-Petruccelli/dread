@@ -3,9 +3,12 @@
 #include <SDL2/SDL_error.h>
 #include <SDL2/SDL_events.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_keycode.h>
 #include <SDL2/SDL_pixels.h>
+#include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_surface.h>
+#include <SDL2/SDL_timer.h>
 #include <SDL2/SDL_video.h>
 #include <stdio.h>
 #include <string>
@@ -32,16 +35,39 @@ private:
   int mHeight;
 };
 
+class Player {
+public:
+  Player();
+  bool setTexture(std::string path);
+  void eventHandler(SDL_Event e);
+  void updateState();
+  void move();
+  void render();
+  void getPosition();
+  void getVelocity();
+
+private:
+  int mPosX;
+  int mPosY;
+  int mVelX;
+  int mVelY;
+  int mMaxVel;
+  LTexture mTexture;
+};
+
 bool init();
 bool loadMedia();
 bool close();
+void updateDelta();
 SDL_Surface *loadSurface(std::string path);
 SDL_Texture *loadTexture(std::string path);
 
 SDL_Window *gWindow = NULL;
 SDL_Renderer *gRenderer = NULL;
-LTexture gFrontTexture;
-LTexture gBackTexture;
+LTexture gBackround;
+LTexture gPlayer;
+Uint32 deltaTime = 0;
+Uint32 lastFrameTime = 0;
 
 int main(int argc, char *args[]) {
   if (!init()) {
@@ -53,6 +79,9 @@ int main(int argc, char *args[]) {
     return -1;
   }
 
+  Player p = Player();
+  p.setTexture("assets/character.png");
+
   SDL_Event e;
   bool quit = false;
   Uint8 alpha = 255;
@@ -61,26 +90,13 @@ int main(int argc, char *args[]) {
       if (e.type == SDL_QUIT) {
         quit = true;
       }
-      if (e.type == SDL_KEYDOWN) {
-        if (e.key.keysym.sym == SDLK_w) {
-          if (alpha + 32 > 255) {
-            alpha = 255;
-          } else {
-            alpha += 32;
-          }
-        }
-        if (e.key.keysym.sym == SDLK_s) {
-          if (alpha - 32 < 0) {
-            alpha = 0;
-          } else {
-            alpha -= 32;
-          }
-        }
-      }
+      p.eventHandler(e);
     }
-    gFrontTexture.setAlpha(alpha);
-    gBackTexture.render(0, 0);
-    gFrontTexture.render(0, 0);
+    updateDelta();
+    p.updateState();
+    gBackround.render(0, 0);
+    gPlayer.render(0, 0);
+    p.render();
     SDL_RenderPresent(gRenderer);
   }
 
@@ -121,18 +137,23 @@ bool init() {
 bool loadMedia() {
   bool success = true;
 
-  if (!gFrontTexture.loadFromFile("assets/front.png")) {
+  if (!gBackround.loadFromFile("assets/backround.png")) {
     printf("Failed to load spritesheet");
     return false;
   }
-  if (!gBackTexture.loadFromFile("assets/back.png")) {
-    printf("Failed to load spritesheet");
+  if (!gPlayer.loadFromFile("assets/character.png")) {
+    printf("Failed to load character");
     return false;
   }
-  gFrontTexture.setBlendMode(SDL_BLENDMODE_BLEND);
-  gBackTexture.setBlendMode(SDL_BLENDMODE_BLEND);
+  gBackround.setBlendMode(SDL_BLENDMODE_BLEND);
+  gPlayer.setBlendMode(SDL_BLENDMODE_BLEND);
 
   return success;
+}
+
+void updateDelta() {
+  deltaTime = SDL_GetTicks() - lastFrameTime;
+  lastFrameTime = SDL_GetTicks();
 }
 
 SDL_Surface *loadSurface(std::string path) {
@@ -158,8 +179,7 @@ SDL_Texture *loadTexture(std::string path) {
 }
 
 bool close() {
-  gFrontTexture.free();
-  gBackTexture.free();
+  gBackround.free();
   SDL_DestroyWindow(gWindow);
   gWindow = NULL;
   SDL_DestroyRenderer(gRenderer);
@@ -231,3 +251,77 @@ void LTexture::render(int x, int y, SDL_Rect *clip) {
 int LTexture::getWidth() { return mWidth; }
 
 int LTexture::getHeight() { return mHeight; }
+
+Player::Player() {
+  mPosX = 100;
+  mPosY = 150;
+  mVelX = 0;
+  mVelY = 0;
+  mMaxVel = 1;
+}
+
+void Player::eventHandler(SDL_Event e) {
+  if (e.type == SDL_KEYDOWN && e.key.repeat == 0) {
+    switch (e.key.keysym.sym) {
+    case SDLK_w:
+      mVelY -= mMaxVel;
+      break;
+    case SDLK_s:
+      mVelY += mMaxVel;
+      break;
+    case SDLK_a:
+      mVelX -= mMaxVel;
+      break;
+    case SDLK_d:
+      mVelX += mMaxVel;
+      break;
+    };
+  } else if (e.type == SDL_KEYUP && e.key.repeat == 0) {
+    switch (e.key.keysym.sym) {
+    case SDLK_w:
+      mVelY += mMaxVel;
+      break;
+    case SDLK_s:
+      mVelY -= mMaxVel;
+      break;
+    case SDLK_a:
+      mVelX += mMaxVel;
+      break;
+    case SDLK_d:
+      mVelX -= mMaxVel;
+      break;
+    };
+  }
+}
+
+void Player::move() {
+  mPosX += mVelX * deltaTime;
+  mPosY += mVelY * deltaTime;
+  printf("deltaT: %u\nVelX: %d\nVelY: %d\n PosX: %d\n PosY: %d\n",
+         deltaTime / 1000, mVelX, mVelY, mPosX, mPosY);
+
+  if (mPosX < 0) {
+    mPosX = 0;
+  }
+  if (mPosX > SCREEN_WIDTH - mTexture.getWidth()) {
+    mPosX = SCREEN_WIDTH - mTexture.getWidth();
+  }
+  if (mPosY < 0) {
+    mPosY = 0;
+  }
+  if (mPosY > SCREEN_HIGHT - mTexture.getHeight()) {
+    mPosY = SCREEN_HIGHT - mTexture.getHeight();
+  }
+}
+
+void Player::updateState() { move(); }
+
+void Player::render() { mTexture.render(mPosX, mPosY); }
+
+bool Player::setTexture(std::string path) {
+  if (!mTexture.loadFromFile("assets/character.png")) {
+    printf("Failed to load character");
+    return false;
+  }
+  return true;
+}
