@@ -28,7 +28,7 @@ void GameObject::setCollider(int xOff, int yOff, int w, int h) {
 
 void GameObject::render() {
   if (mTexture.isLoaded()) {
-    mTexture.render(mPosX, mPosY);
+    mTexture.render((int)mPosX, (int)mPosY);
   }
 }
 

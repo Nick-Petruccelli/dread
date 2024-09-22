@@ -14,7 +14,10 @@ void Engine::init() {
   mScreenHeight = 480;
 }
 
-void Engine::updateDeltaTime() { mDeltaTime = SDL_GetTicks() - mPrevFrameTime; }
+void Engine::updateDeltaTime() {
+  mDeltaTime = SDL_GetTicks() - mPrevFrameTime;
+  mPrevFrameTime = SDL_GetTicks();
+}
 
 unsigned int Engine::getScreenWidth() { return mScreenWidth; }
 

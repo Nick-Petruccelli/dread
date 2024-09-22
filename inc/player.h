@@ -2,19 +2,18 @@
 #define PLAYER_H
 #include "gameObject.h"
 #include <SDL2/SDL.h>
-#include <string>
 
 class Player : public GameObject {
 public:
-  Player();
+  Player(float x, float y);
   void handelEvents(SDL_Event e);
   void updateState();
   void move();
 
 private:
-  int mVelX;
-  int mVelY;
-  int mMaxVel;
+  float mVelX;
+  float mVelY;
+  float mMaxVel;
 };
 
 #endif

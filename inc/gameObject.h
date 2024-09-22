@@ -20,8 +20,8 @@ public:
   int getPosY();
 
 protected:
-  int mPosX;
-  int mPosY;
+  float mPosX;
+  float mPosY;
   Texture mTexture;
   SDL_Rect mCollider;
 };
