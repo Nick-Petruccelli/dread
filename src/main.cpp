@@ -295,22 +295,16 @@ void Player::eventHandler(SDL_Event e) {
 }
 
 void Player::move() {
-  mPosX += mVelX * deltaTime;
-  mPosY += mVelY * deltaTime;
-  printf("deltaT: %u\nVelX: %d\nVelY: %d\n PosX: %d\n PosY: %d\n",
-         deltaTime / 1000, mVelX, mVelY, mPosX, mPosY);
+  int velAdjustX = mVelX * deltaTime;
+  int velAdjustY = mVelY * deltaTime;
+  mPosX += velAdjustX;
+  mPosY += velAdjustY;
 
-  if (mPosX < 0) {
-    mPosX = 0;
+  if (mPosX < 0 || mPosX > SCREEN_WIDTH - mTexture.getWidth()) {
+    mPosX -= velAdjustX;
   }
-  if (mPosX > SCREEN_WIDTH - mTexture.getWidth()) {
-    mPosX = SCREEN_WIDTH - mTexture.getWidth();
-  }
-  if (mPosY < 0) {
-    mPosY = 0;
-  }
-  if (mPosY > SCREEN_HIGHT - mTexture.getHeight()) {
-    mPosY = SCREEN_HIGHT - mTexture.getHeight();
+  if (mPosY < 0 || mPosY > SCREEN_HIGHT - mTexture.getHeight()) {
+    mPosY -= velAdjustY;
   }
 }
 
