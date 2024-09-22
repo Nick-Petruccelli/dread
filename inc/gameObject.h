@@ -18,7 +18,7 @@ public:
   int getPosX();
   int getPosY();
 
-private:
+protected:
   int mPosX;
   int mPosY;
   Texture mTexture;
