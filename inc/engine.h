@@ -1,18 +1,19 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
-class Engine {
+struct Engine {
 public:
+  static void init();
   static unsigned int getDeltaTime();
   static unsigned int getScreenWidth();
   static unsigned int getScreenHeight();
+  static void updateDeltaTime();
 
 private:
-  void updateDeltaTime();
-  unsigned int deltaTime;
-  unsigned int prevTime;
-  unsigned int screenWidth;
-  unsigned int screenHeight;
+  static unsigned int mDeltaTime;
+  static unsigned int mPrevFrameTime;
+  static unsigned int mScreenWidth;
+  static unsigned int mScreenHeight;
 };
 
 #endif

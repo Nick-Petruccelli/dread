@@ -47,6 +47,8 @@ void Texture::free() {
   }
 }
 
+void Texture::setRenderer(SDL_Renderer *renderer) { mRenderer = renderer; }
+
 void Texture::setColor(Uint8 r, Uint8 g, Uint8 b) {
   SDL_SetTextureColorMod(mTexture, r, g, b);
 }

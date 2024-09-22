@@ -1,3 +1,5 @@
+#include "../inc/engine.h"
+#include "../inc/player.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_blendmode.h>
 #include <SDL2/SDL_error.h>
@@ -11,7 +13,6 @@
 #include <SDL2/SDL_timer.h>
 #include <SDL2/SDL_video.h>
 #include <stdio.h>
-#include <string>
 
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HIGHT = 480;
@@ -19,14 +20,9 @@ const int SCREEN_HIGHT = 480;
 bool init();
 bool loadMedia();
 bool close();
-void updateDelta();
-SDL_Surface *loadSurface(std::string path);
-SDL_Texture *loadTexture(std::string path);
 
 SDL_Window *gWindow = NULL;
 SDL_Renderer *gRenderer = NULL;
-Uint32 deltaTime = 0;
-Uint32 lastFrameTime = 0;
 
 int main(int argc, char *args[]) {
   if (!init()) {
@@ -38,6 +34,9 @@ int main(int argc, char *args[]) {
     return -1;
   }
 
+  Player player = Player();
+  player.setTexture("assets/character.png", gRenderer);
+
   SDL_Event e;
   bool quit = false;
   Uint8 alpha = 255;
@@ -46,8 +45,11 @@ int main(int argc, char *args[]) {
       if (e.type == SDL_QUIT) {
         quit = true;
       }
+      player.handelEvents(e);
     }
-    updateDelta();
+    Engine::updateDeltaTime();
+    player.updateState();
+    player.render();
     SDL_RenderPresent(gRenderer);
   }
 
@@ -80,7 +82,6 @@ bool init() {
     printf("ERROR::SDL::Failed to init image loading\n%s\n", SDL_GetError());
     return false;
   }
-  // gSurface = SDL_GetWindowSurface(gWindow);
 
   return true;
 }
@@ -89,33 +90,6 @@ bool loadMedia() {
   bool success = true;
 
   return success;
-}
-
-void updateDelta() {
-  deltaTime = SDL_GetTicks() - lastFrameTime;
-  lastFrameTime = SDL_GetTicks();
-}
-
-SDL_Surface *loadSurface(std::string path) {
-  SDL_Surface *surf = IMG_Load(path.c_str());
-  if (surf == NULL) {
-    printf("ERROR::SDL::Failed to load surface\n%s\n", SDL_GetError());
-  }
-  // surf = SDL_ConvertSurface(surf, gSurface->format, 0);
-  return surf;
-}
-
-SDL_Texture *loadTexture(std::string path) {
-  SDL_Texture *tex = NULL;
-  SDL_Surface *surf = IMG_Load(path.c_str());
-  if (surf == NULL) {
-    printf("ERROR::SDL::Failed to load surface\n%s\n", SDL_GetError());
-  }
-  tex = SDL_CreateTextureFromSurface(gRenderer, surf);
-  if (tex == NULL) {
-    printf("ERROR::SDL::Failed to load texture\n%s\n", SDL_GetError());
-  }
-  return tex;
 }
 
 bool close() {

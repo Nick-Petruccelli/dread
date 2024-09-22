@@ -1,8 +1,12 @@
 #include "../inc/gameObject.h"
+#include <SDL2/SDL_render.h>
 
 GameObject::GameObject() {}
 
-bool GameObject::setTexture(std::string path) {
+GameObject::~GameObject() {}
+
+bool GameObject::setTexture(std::string path, SDL_Renderer *renderer) {
+  mTexture.setRenderer(renderer);
   if (!mTexture.loadFromFile(path)) {
     return false;
   }
@@ -27,6 +31,8 @@ void GameObject::render() {
     mTexture.render(mPosX, mPosY);
   }
 }
+
+bool Texture::isLoaded() { return mTexture != NULL; }
 
 SDL_Rect GameObject::getCollider() { return mCollider; }
 int GameObject::getPosX() { return mPosX; }

@@ -4,10 +4,10 @@
 #include <SDL2/SDL.h>
 #include <string>
 
-class Player : GameObject {
+class Player : public GameObject {
 public:
   Player();
-  void eventHandler(SDL_Event e);
+  void handelEvents(SDL_Event e);
   void updateState();
   void move();
 

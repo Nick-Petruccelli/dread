@@ -9,7 +9,7 @@ Player::Player() {
   mMaxVel = 1;
 }
 
-void Player::eventHandler(SDL_Event e) {
+void Player::handelEvents(SDL_Event e) {
   if (e.type == SDL_KEYDOWN && e.key.repeat == 0) {
     switch (e.key.keysym.sym) {
     case SDLK_w:
