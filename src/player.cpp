@@ -44,20 +44,23 @@ void Player::handelEvents(SDL_Event e) {
 }
 
 void Player::move() {
-  unsigned int deltaTime = Engine::getDeltaTime();
-  int velAdjustX = mVelX * deltaTime;
-  int velAdjustY = mVelY * deltaTime;
-  mPosX += velAdjustX;
-  mPosY += velAdjustY;
+  float deltaTime = Engine::getDeltaTime() / 1000.0;
+  float velAdjustX = mVelX * deltaTime;
+  float velAdjustY = mVelY * deltaTime;
+  float newPosX = mPosX + velAdjustX;
+  float newPosY = mPosY + velAdjustY;
 
   unsigned int screenWidth = Engine::getScreenWidth();
   unsigned int screenHeight = Engine::getScreenHeight();
-  if (mPosX < 0 || mPosX > screenWidth - mTexture.getWidth()) {
-    mPosX -= velAdjustX;
+  if (newPosX < 0 || newPosX > screenWidth - mTexture.getWidth()) {
+    newPosX -= velAdjustX;
   }
-  if (mPosY < 0 || mPosY > screenHeight - mTexture.getHeight()) {
-    mPosY -= velAdjustY;
+  if (newPosY < 0 || newPosY > screenHeight - mTexture.getHeight()) {
+    newPosY -= velAdjustY;
   }
+
+  mPosX = newPosX;
+  mPosY = newPosY;
 }
 
 void Player::updateState() { move(); }
