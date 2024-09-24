@@ -26,6 +26,8 @@ void GameObject::setCollider(int xOff, int yOff, int w, int h) {
   mCollider.h = h;
 }
 
+void GameObject::setID(unsigned int id) { mID = id; }
+
 void GameObject::render() {
   if (mTexture.isLoaded()) {
     mTexture.render((int)mPosX, (int)mPosY);
@@ -37,3 +39,4 @@ bool Texture::isLoaded() { return mTexture != NULL; }
 SDL_Rect GameObject::getCollider() { return mCollider; }
 int GameObject::getPosX() { return mPosX; }
 int GameObject::getPosY() { return mPosY; }
+unsigned int GameObject::getID() { return mID; }

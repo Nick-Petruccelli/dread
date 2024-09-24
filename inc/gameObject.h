@@ -12,14 +12,17 @@ public:
   bool setTexture(std::string path, SDL_Renderer *renderer);
   void setCollider(int w, int h);
   void setCollider(int xOff, int yOff, int w, int h);
+  void setID(unsigned int id);
   void handelEvents(SDL_Event e);
   void updateState();
   void render();
   SDL_Rect getCollider();
   int getPosX();
   int getPosY();
+  unsigned int getID();
 
 protected:
+  unsigned int mID;
   float mPosX;
   float mPosY;
   Texture mTexture;
