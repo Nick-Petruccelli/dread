@@ -64,7 +64,7 @@ void Texture::render(int x, int y, SDL_Rect *clip) {
     printf("hit\n");
     return;
   }
-  SDL_Rect displayRect = {x, y, mWidth, mHeight};
+  SDL_Rect displayRect = {x, y, mWidth * 2, mHeight * 2};
   if (clip != NULL) {
     displayRect.w = clip->w;
     displayRect.h = clip->h;

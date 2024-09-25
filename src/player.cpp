@@ -1,6 +1,9 @@
 #include "../inc/player.h"
 #include "../inc/engine.h"
+#include "../inc/window.h"
 #include <cmath>
+
+extern Window gWindow;
 
 Player::Player() {}
 Player::~Player() {}
@@ -64,8 +67,8 @@ void Player::move() {
   mPosX += velAdjustX;
   mPosY += velAdjustY;
 
-  unsigned int screenWidth = Engine::getScreenWidth();
-  unsigned int screenHeight = Engine::getScreenHeight();
+  unsigned int screenWidth = gWindow.getWidth();
+  unsigned int screenHeight = gWindow.getHeight();
   if (mPosX < 0 || mPosX > screenWidth - mTexture.getWidth()) {
     mPosX -= velAdjustX;
   }

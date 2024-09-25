@@ -1,11 +1,8 @@
 #include "../inc/scene.h"
 #include <SDL2/SDL_events.h>
-#include <cstdlib>
-#include <cstring>
 #include <fstream>
-#include <iostream>
-#include <iterator>
 #include <string>
+#include <typeinfo>
 
 Scene::Scene(SDL_Renderer *renderer) {
   mRenderer = renderer;

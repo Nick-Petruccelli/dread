@@ -1,6 +1,6 @@
 #include "../inc/engine.h"
-#include "../inc/player.h"
 #include "../inc/scene.h"
+#include "../inc/window.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_blendmode.h>
 #include <SDL2/SDL_error.h>
@@ -15,14 +15,11 @@
 #include <SDL2/SDL_video.h>
 #include <stdio.h>
 
-const int SCREEN_WIDTH = 640;
-const int SCREEN_HIGHT = 480;
-
 bool init();
 bool loadMedia();
 bool close();
 
-SDL_Window *gWindow = NULL;
+Window gWindow;
 SDL_Renderer *gRenderer = NULL;
 Texture gBackground;
 
@@ -47,17 +44,12 @@ int main(int argc, char *args[]) {
       if (e.type == SDL_QUIT) {
         quit = true;
       }
-      // player.handelEvents(e);
+      gWindow.eventHandler(e);
       scene.handelEvents(e);
-      // pArr[0].handelEvents(e);
     }
     Engine::updateDeltaTime();
-    // player.updateState();
     scene.updateSceneState();
-    // pArr[0].updateState();
     gBackground.render(0, 0);
-    // player.render();
-    //  pArr[0].render();
 
     scene.renderScene();
     SDL_RenderPresent(gRenderer);
@@ -72,15 +64,12 @@ bool init() {
     return false;
   }
 
-  gWindow = SDL_CreateWindow("DREAD", SDL_WINDOWPOS_UNDEFINED,
-                             SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH,
-                             SCREEN_HIGHT, SDL_WINDOW_SHOWN);
-  if (gWindow == NULL) {
+  if (!gWindow.init()) {
     printf("SDL::Failed to create window\n%s\n", SDL_GetError());
     return false;
   }
 
-  gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
+  gRenderer = gWindow.createRenderer();
   if (gRenderer == NULL) {
     printf("SDL::Failed to create renderer\n%s\n", SDL_GetError());
     return false;
@@ -108,8 +97,7 @@ bool loadMedia() {
 }
 
 bool close() {
-  SDL_DestroyWindow(gWindow);
-  gWindow = NULL;
+  gWindow.free();
   SDL_DestroyRenderer(gRenderer);
   gRenderer = NULL;
   IMG_Quit();
