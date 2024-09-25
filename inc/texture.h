@@ -19,6 +19,8 @@ public:
   int getWidth();
   int getHeight();
   bool isLoaded();
+  SDL_Texture *getTexturePtr();
+  SDL_Renderer *getRend();
 
 private:
   SDL_Renderer *mRenderer;

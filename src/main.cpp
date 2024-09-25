@@ -1,5 +1,6 @@
 #include "../inc/engine.h"
 #include "../inc/player.h"
+#include "../inc/scene.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_blendmode.h>
 #include <SDL2/SDL_error.h>
@@ -35,8 +36,8 @@ int main(int argc, char *args[]) {
     return -1;
   }
 
-  Player player = Player(0, 0);
-  player.setTexture("assets/character.png", gRenderer);
+  Scene scene(gRenderer);
+  scene.addPlayer("assets/objData/player.txt");
 
   SDL_Event e;
   bool quit = false;
@@ -46,12 +47,19 @@ int main(int argc, char *args[]) {
       if (e.type == SDL_QUIT) {
         quit = true;
       }
-      player.handelEvents(e);
+      // player.handelEvents(e);
+      scene.handelEvents(e);
+      // pArr[0].handelEvents(e);
     }
     Engine::updateDeltaTime();
-    player.updateState();
+    // player.updateState();
+    scene.updateSceneState();
+    // pArr[0].updateState();
     gBackground.render(0, 0);
-    player.render();
+    // player.render();
+    //  pArr[0].render();
+
+    scene.renderScene();
     SDL_RenderPresent(gRenderer);
   }
 

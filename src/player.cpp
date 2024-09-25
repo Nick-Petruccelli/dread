@@ -2,13 +2,18 @@
 #include "../inc/engine.h"
 #include <cmath>
 
+Player::Player() {}
+Player::~Player() {}
+
 Player::Player(float x, float y) {
   mPosX = x;
   mPosY = y;
   mVelX = 0;
   mVelY = 0;
-  mMaxVel = 500;
+  mMaxVel = 10;
 }
+
+void Player::setMaxVel(float vel) { mMaxVel = vel; }
 
 void Player::handelEvents(SDL_Event e) {
   if (e.type == SDL_KEYDOWN && e.key.repeat == 0) {
@@ -44,6 +49,8 @@ void Player::handelEvents(SDL_Event e) {
   }
 }
 
+void Player::updateState() { move(); }
+
 void Player::move() {
   if (mVelX == 0 && mVelY == 0) {
     return;
@@ -68,5 +75,3 @@ void Player::move() {
   printf("dt: %f\nvx: %f\nvy: %f\nposx: %f\nposy: %f\n", deltaTime, velAdjustX,
          velAdjustY, mPosX, mPosY);
 }
-
-void Player::updateState() { move(); }

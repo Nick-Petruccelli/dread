@@ -5,12 +5,19 @@ GameObject::GameObject() {}
 
 GameObject::~GameObject() {}
 
+Texture GameObject::getTex() { return mTexture; }
+
 bool GameObject::setTexture(std::string path, SDL_Renderer *renderer) {
   mTexture.setRenderer(renderer);
   if (!mTexture.loadFromFile(path)) {
     return false;
   }
   return true;
+}
+
+void GameObject::setPosition(float x, float y) {
+  mPosX = x;
+  mPosY = y;
 }
 
 void GameObject::setCollider(int w, int h) {

@@ -61,6 +61,7 @@ void Texture::setAlpha(Uint8 a) { SDL_SetTextureAlphaMod(mTexture, a); }
 
 void Texture::render(int x, int y, SDL_Rect *clip) {
   if (mRenderer == NULL) {
+    printf("hit\n");
     return;
   }
   SDL_Rect displayRect = {x, y, mWidth, mHeight};
@@ -74,3 +75,6 @@ void Texture::render(int x, int y, SDL_Rect *clip) {
 int Texture::getWidth() { return mWidth; }
 
 int Texture::getHeight() { return mHeight; }
+
+SDL_Texture *Texture::getTexturePtr() { return mTexture; }
+SDL_Renderer *Texture::getRend() { return mRenderer; }

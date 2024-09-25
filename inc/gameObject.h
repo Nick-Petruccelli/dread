@@ -10,16 +10,18 @@ public:
   GameObject();
   ~GameObject();
   bool setTexture(std::string path, SDL_Renderer *renderer);
+  void setPosition(float x, float y);
   void setCollider(int w, int h);
   void setCollider(int xOff, int yOff, int w, int h);
   void setID(unsigned int id);
-  void handelEvents(SDL_Event e);
-  void updateState();
+  virtual void handelEvents(SDL_Event e){};
+  virtual void updateState(){};
   void render();
   SDL_Rect getCollider();
   int getPosX();
   int getPosY();
   unsigned int getID();
+  Texture getTex();
 
 protected:
   unsigned int mID;
