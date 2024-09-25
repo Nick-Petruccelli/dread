@@ -13,6 +13,7 @@ public:
   void eventHandler(SDL_Event e);
   int getWidth();
   int getHeight();
+  float getScale();
   bool hasMouseFocus();
   bool hasKeyboardFocus();
   bool isFullscreen();

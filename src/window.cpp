@@ -94,6 +94,8 @@ int Window::getWidth() { return mWidth; }
 
 int Window::getHeight() { return mHeight; }
 
+float Window::getScale() { return (float)mWidth / (float)INITIAL_SCREEN_WIDTH; }
+
 bool Window::hasMouseFocus() { return mMouseFocus; }
 
 bool Window::hasKeyboardFocus() { return mKeyboardFocus; }

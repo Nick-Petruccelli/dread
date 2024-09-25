@@ -67,8 +67,9 @@ void Player::move() {
   mPosX += velAdjustX;
   mPosY += velAdjustY;
 
-  unsigned int screenWidth = gWindow.getWidth();
-  unsigned int screenHeight = gWindow.getHeight();
+  float windowScale = gWindow.getScale();
+  unsigned int screenWidth = gWindow.getWidth() / windowScale;
+  unsigned int screenHeight = gWindow.getHeight() / windowScale;
   if (mPosX < 0 || mPosX > screenWidth - mTexture.getWidth()) {
     mPosX -= velAdjustX;
   }

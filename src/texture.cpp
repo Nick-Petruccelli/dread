@@ -1,6 +1,8 @@
 #include "../inc/texture.h"
+#include "../inc/window.h"
 #include <SDL2/SDL_image.h>
 
+extern Window gWindow;
 Texture::Texture() {
   mTexture = NULL;
   mWidth = 0;
@@ -64,7 +66,10 @@ void Texture::render(int x, int y, SDL_Rect *clip) {
     printf("hit\n");
     return;
   }
-  SDL_Rect displayRect = {x, y, mWidth * 2, mHeight * 2};
+  float windowScale = gWindow.getScale();
+  SDL_Rect displayRect = {(int)(x * windowScale), (int)(y * windowScale),
+                          (int)(mWidth * windowScale),
+                          (int)(mHeight * windowScale)};
   if (clip != NULL) {
     displayRect.w = clip->w;
     displayRect.h = clip->h;
