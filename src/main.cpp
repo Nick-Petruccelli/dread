@@ -1,5 +1,6 @@
 #include "../inc/engine.h"
 #include "../inc/scene.h"
+#include "../inc/ui.h"
 #include "../inc/window.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_blendmode.h>
@@ -12,8 +13,10 @@
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_surface.h>
 #include <SDL2/SDL_timer.h>
+#include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_video.h>
 #include <stdio.h>
+#include <vector>
 
 bool init();
 bool loadMedia();
@@ -33,13 +36,19 @@ int main(int argc, char *args[]) {
     return -1;
   }
 
+  UI ui;
+  ui.setFont("assets/fonts/OpenSans-Regular.ttf");
+  if (!ui.addTextElement(0, 0, "Hello, world!", {0, 0, 0, 255})) {
+    printf("faild to add text\n");
+    return -1;
+  }
+
   gScene = Scene(gRenderer);
   gScene.addMap("assets/background.png");
   gScene.addPlayer("assets/objData/player.txt");
 
   SDL_Event e;
   bool quit = false;
-  Uint8 alpha = 255;
   while (quit == false) {
     while (SDL_PollEvent(&e) != 0) {
       if (e.type == SDL_QUIT) {
@@ -52,6 +61,7 @@ int main(int argc, char *args[]) {
     gScene.updateSceneState();
 
     gScene.renderScene();
+    ui.render();
     SDL_RenderPresent(gRenderer);
   }
 
@@ -79,6 +89,11 @@ bool init() {
   int imgFlags = IMG_INIT_PNG;
   if (!(IMG_Init(imgFlags) & imgFlags)) {
     printf("ERROR::SDL::Failed to init image loading\n%s\n", SDL_GetError());
+    return false;
+  }
+
+  if (TTF_Init() == -1) {
+    printf("SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
     return false;
   }
 

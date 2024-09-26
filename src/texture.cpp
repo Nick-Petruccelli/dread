@@ -1,6 +1,9 @@
 #include "../inc/texture.h"
 #include "../inc/window.h"
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_render.h>
+#include <SDL2/SDL_surface.h>
+#include <SDL2/SDL_ttf.h>
 
 extern Window gWindow;
 Texture::Texture() {
@@ -40,6 +43,24 @@ bool Texture::loadFromFile(std::string path) {
   return mTexture != NULL;
 }
 
+bool Texture::loadFromText(TTF_Font *font, std::string text, SDL_Color color) {
+  free();
+  SDL_Surface *surf = TTF_RenderText_Solid(font, text.c_str(), color);
+  if (surf == NULL) {
+    printf("ERROR::SDL::Failed to load surface\n%s\n", SDL_GetError());
+    return false;
+  }
+  mTexture = SDL_CreateTextureFromSurface(mRenderer, surf);
+  if (mTexture == NULL) {
+    printf("ERROR::SDL::Failed to create texture\n%s\n", SDL_GetError());
+    return false;
+  }
+  mHeight = surf->h;
+  mWidth = surf->w;
+  SDL_FreeSurface(surf);
+  return true;
+}
+
 void Texture::free() {
   if (mTexture != NULL) {
     SDL_DestroyTexture(mTexture);
@@ -63,12 +84,17 @@ void Texture::setAlpha(Uint8 a) { SDL_SetTextureAlphaMod(mTexture, a); }
 
 void Texture::render(int x, int y, int *camOffSet, SDL_Rect *clip) {
   if (mRenderer == NULL) {
+    printf("hit\n");
     return;
   }
+  if (camOffSet == NULL) {
+    camOffSet = new int[2];
+    camOffSet[0] = 0;
+    camOffSet[1] = 0;
+  }
   float windowScale = gWindow.getScale();
-  printf("CamOffSet: %d, %d\n", camOffSet[0], camOffSet[1]);
-  SDL_Rect displayRect = {(int)(x * windowScale) - camOffSet[0],
-                          (int)(y * windowScale) - camOffSet[1],
+  SDL_Rect displayRect = {(int)((x - camOffSet[0]) * windowScale),
+                          (int)((y - camOffSet[1]) * windowScale),
                           (int)(mWidth * windowScale),
                           (int)(mHeight * windowScale)};
   if (clip != NULL) {

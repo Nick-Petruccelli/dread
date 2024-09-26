@@ -1,5 +1,5 @@
 CC=g++
-CFLAGS= -lSDL2 -lSDL2_image
+CFLAGS= -lSDL2 -lSDL2_image -lSDL2_ttf
 SRC=src
 OBJ=obj
 SRCS=$(wildcard $(SRC)/*.cpp)
