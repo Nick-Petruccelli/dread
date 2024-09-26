@@ -1,9 +1,11 @@
 #include "../inc/player.h"
 #include "../inc/engine.h"
+#include "../inc/scene.h"
 #include "../inc/window.h"
 #include <cmath>
 
 extern Window gWindow;
+extern Scene gScene;
 
 Player::Player() {}
 Player::~Player() {}
@@ -68,14 +70,11 @@ void Player::move() {
   mPosY += velAdjustY;
 
   float windowScale = gWindow.getScale();
-  unsigned int screenWidth = gWindow.getWidth() / windowScale;
-  unsigned int screenHeight = gWindow.getHeight() / windowScale;
-  if (mPosX < 0 || mPosX > screenWidth - mTexture.getWidth()) {
+
+  if (mPosX < 0 || mPosX > gScene.getMapWidth() - mTexture.getWidth()) {
     mPosX -= velAdjustX;
   }
-  if (mPosY < 0 || mPosY > screenHeight - mTexture.getHeight()) {
+  if (mPosY < 0 || mPosY > gScene.getMapHeight() - mTexture.getHeight()) {
     mPosY -= velAdjustY;
   }
-  printf("dt: %f\nvx: %f\nvy: %f\nposx: %f\nposy: %f\n", deltaTime, velAdjustX,
-         velAdjustY, mPosX, mPosY);
 }

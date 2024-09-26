@@ -61,13 +61,14 @@ void Texture::setBlendMode(SDL_BlendMode blending) {
 
 void Texture::setAlpha(Uint8 a) { SDL_SetTextureAlphaMod(mTexture, a); }
 
-void Texture::render(int x, int y, SDL_Rect *clip) {
+void Texture::render(int x, int y, int *camOffSet, SDL_Rect *clip) {
   if (mRenderer == NULL) {
-    printf("hit\n");
     return;
   }
   float windowScale = gWindow.getScale();
-  SDL_Rect displayRect = {(int)(x * windowScale), (int)(y * windowScale),
+  printf("CamOffSet: %d, %d\n", camOffSet[0], camOffSet[1]);
+  SDL_Rect displayRect = {(int)(x * windowScale) - camOffSet[0],
+                          (int)(y * windowScale) - camOffSet[1],
                           (int)(mWidth * windowScale),
                           (int)(mHeight * windowScale)};
   if (clip != NULL) {

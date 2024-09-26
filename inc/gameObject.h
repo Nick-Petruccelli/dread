@@ -16,10 +16,12 @@ public:
   void setID(unsigned int id);
   virtual void handelEvents(SDL_Event e){};
   virtual void updateState(){};
-  void render();
+  void render(int *camOffSet);
   SDL_Rect getCollider();
   int getPosX();
   int getPosY();
+  int getWidth();
+  int getHeight();
   unsigned int getID();
   Texture getTex();
 

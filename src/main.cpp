@@ -21,7 +21,7 @@ bool close();
 
 Window gWindow;
 SDL_Renderer *gRenderer = NULL;
-Texture gBackground;
+Scene gScene;
 
 int main(int argc, char *args[]) {
   if (!init()) {
@@ -33,8 +33,9 @@ int main(int argc, char *args[]) {
     return -1;
   }
 
-  Scene scene(gRenderer);
-  scene.addPlayer("assets/objData/player.txt");
+  gScene = Scene(gRenderer);
+  gScene.addMap("assets/background.png");
+  gScene.addPlayer("assets/objData/player.txt");
 
   SDL_Event e;
   bool quit = false;
@@ -45,13 +46,12 @@ int main(int argc, char *args[]) {
         quit = true;
       }
       gWindow.eventHandler(e);
-      scene.handelEvents(e);
+      gScene.handelEvents(e);
     }
     Engine::updateDeltaTime();
-    scene.updateSceneState();
-    gBackground.render(0, 0);
+    gScene.updateSceneState();
 
-    scene.renderScene();
+    gScene.renderScene();
     SDL_RenderPresent(gRenderer);
   }
 
@@ -82,16 +82,11 @@ bool init() {
     return false;
   }
 
-  gBackground.setRenderer(gRenderer);
-
   return true;
 }
 
 bool loadMedia() {
   bool success = true;
-  if (!gBackground.loadFromFile("assets/backround.png")) {
-    success = false;
-  }
 
   return success;
 }

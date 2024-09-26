@@ -15,7 +15,7 @@ public:
   void setColor(Uint8 r, Uint8 g, Uint8 b);
   void setBlendMode(SDL_BlendMode blending);
   void setAlpha(Uint8 a);
-  void render(int x, int y, SDL_Rect *clip = NULL);
+  void render(int x, int y, int *camOffSet, SDL_Rect *clip = NULL);
   int getWidth();
   int getHeight();
   bool isLoaded();

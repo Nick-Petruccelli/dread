@@ -4,6 +4,8 @@
 #include <string>
 #include <typeinfo>
 
+Scene::Scene() { mRenderer = NULL; }
+
 Scene::Scene(SDL_Renderer *renderer) {
   mRenderer = renderer;
   mGameObjects.reserve(20);
@@ -30,6 +32,11 @@ bool Scene::addPlayer(std::string path) {
   return true;
 }
 
+bool Scene::addMap(std::string path) {
+  mMap.setRenderer(mRenderer);
+  return mMap.loadFromFile(path);
+}
+
 void Scene::handelEvents(SDL_Event e) {
   mPlayer.handelEvents(e);
   for (unsigned int i = 0; i < mGameObjects.size(); i++) {
@@ -39,16 +46,23 @@ void Scene::handelEvents(SDL_Event e) {
 
 void Scene::updateSceneState() {
   mPlayer.updateState();
+  mCamera.moveTo(mPlayer.getPosX() + mPlayer.getWidth(),
+                 mPlayer.getPosY() + mPlayer.getHeight());
   for (unsigned int i = 0; i < mGameObjects.size(); i++) {
     mGameObjects[i]->updateState();
   }
 }
 
 void Scene::renderScene() {
-  mPlayer.render();
+  int *camOffSet = mCamera.getOffSet();
+  mMap.render(0, 0, camOffSet);
+  mPlayer.render(camOffSet);
+  /*
   for (unsigned int i = 0; i < mGameObjects.size(); i++) {
     mGameObjects[i]->render();
   }
+       */
+  delete camOffSet;
 }
 
 unsigned int Scene::addGameObject(GameObject *obj) {
@@ -63,5 +77,9 @@ void Scene::removeGameObject(unsigned int objID) {
   mIndexLookUp[mGameObjects[idx]->getID()] = idx;
   mFreeIDs.push(objID);
 }
+
+int Scene::getMapWidth() { return mMap.getWidth(); }
+
+int Scene::getMapHeight() { return mMap.getHeight(); }
 
 unsigned int Scene::getIndex(unsigned int objID) { return mIndexLookUp[objID]; }
