@@ -15,8 +15,8 @@
 #include <SDL2/SDL_timer.h>
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_video.h>
+#include <sstream>
 #include <stdio.h>
-#include <vector>
 
 bool init();
 bool loadMedia();
@@ -38,14 +38,16 @@ int main(int argc, char *args[]) {
 
   UI ui;
   ui.setFont("assets/fonts/OpenSans-Regular.ttf");
-  if (!ui.addTextElement(0, 0, "Hello, world!", {0, 0, 0, 255})) {
-    printf("faild to add text\n");
-    return -1;
-  }
+  ui.addTextElement(0, 0, "FPS: ", {0, 0, 0, 255});
+  ui.addTextElement(55, 0, "00", {0, 0, 0, 255});
 
   gScene = Scene(gRenderer);
   gScene.addMap("assets/background.png");
   gScene.addPlayer("assets/objData/player.txt");
+
+  int framesScinceLast = 0;
+  unsigned int timeScinceLast = SDL_GetTicks();
+  std::stringstream fpsText;
 
   SDL_Event e;
   bool quit = false;
@@ -61,8 +63,21 @@ int main(int argc, char *args[]) {
     gScene.updateSceneState();
 
     gScene.renderScene();
+
+    if (framesScinceLast >= 200) {
+      UI_Element *fpsElm = ui.getElement(1);
+      fpsText.str("");
+      fpsText << framesScinceLast /
+                     ((SDL_GetTicks() - timeScinceLast) / 1000.0);
+      fpsElm->texture->loadFromText(ui.getFont(), fpsText.str().c_str(),
+                                    {0, 0, 0, 255});
+      framesScinceLast = 0;
+      timeScinceLast = SDL_GetTicks();
+    }
+
     ui.render();
     SDL_RenderPresent(gRenderer);
+    framesScinceLast++;
   }
 
   return 0;
