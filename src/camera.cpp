@@ -22,11 +22,17 @@ void Camera::moveTo(float x, float y) {
   float deltaY = velY * (Engine::getDeltaTime() / 1000.0);
   mCam.x += deltaX;
   mCam.y += deltaY;
-  if (mCam.x < 0 || mCam.x + mCam.w > gScene.getMapWidth()) {
-    mCam.x -= deltaX;
+  if (mCam.x < 0) {
+    mCam.x = 0;
   }
-  if (mCam.y < 0 || mCam.y + mCam.h > gScene.getMapHeight()) {
-    mCam.y -= deltaY;
+  if (mCam.x + mCam.w > gScene.getMapWidth()) {
+    mCam.x = gScene.getMapWidth() - mCam.w;
+  }
+  if (mCam.y < 0) {
+    mCam.y = 0;
+  }
+  if (mCam.y + mCam.h > gScene.getMapHeight()) {
+    mCam.y = gScene.getMapHeight() - mCam.h;
   }
 }
 

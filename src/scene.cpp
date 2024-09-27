@@ -46,8 +46,8 @@ void Scene::handelEvents(SDL_Event e) {
 
 void Scene::updateSceneState() {
   mPlayer.updateState();
-  mCamera.moveTo(mPlayer.getPosX() + mPlayer.getWidth(),
-                 mPlayer.getPosY() + mPlayer.getHeight());
+  mCamera.moveTo(mPlayer.getPosX() + mPlayer.getWidth() / 2.0,
+                 mPlayer.getPosY() + mPlayer.getHeight() / 2.0);
   for (unsigned int i = 0; i < mGameObjects.size(); i++) {
     mGameObjects[i]->updateState();
   }
