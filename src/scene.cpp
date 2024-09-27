@@ -23,6 +23,7 @@ bool Scene::addPlayer(std::string path) {
 
     if (param.compare("Texture") == 0) {
       mPlayer.setTexture(value, mRenderer);
+      mPlayer.setCollider(mPlayer.getWidth(), mPlayer.getHeight());
     } else if (param.compare("MaxVel") == 0) {
       mPlayer.setMaxVel(std::stof(value));
     }
@@ -43,12 +44,38 @@ void Scene::handelEvents(SDL_Event e) {
   }
 }
 
+bool checkCollision(SDL_Rect obj1, SDL_Rect obj2) {
+  bool xIn = false;
+  bool yIn = false;
+  if (obj1.x <= obj2.x && obj2.x <= obj1.x + obj1.w) {
+    xIn = true;
+  }
+  if (obj1.x <= obj2.x + obj2.w && obj2.x + obj2.w <= obj1.x + obj1.w) {
+    xIn = true;
+  }
+  if (obj1.y <= obj2.y && obj2.y <= obj1.y + obj1.h) {
+    yIn = true;
+  }
+  if (obj1.y <= obj2.y + obj2.h && obj2.y + obj2.w <= obj1.y + obj1.h) {
+    yIn = true;
+  }
+  return xIn && yIn;
+}
+
 void Scene::updateSceneState() {
   mPlayer.updateState();
+  SDL_Rect playerColider = mPlayer.getCollider();
   mCamera.moveTo(mPlayer.getPosX() + mPlayer.getWidth() / 2.0,
                  mPlayer.getPosY() + mPlayer.getHeight() / 2.0);
   for (unsigned int i = 0; i < mGameObjects.size(); i++) {
     mGameObjects[i].updateState();
+    SDL_Rect collider = mGameObjects[i].getCollider();
+    bool hit = false;
+    hit = checkCollision(playerColider, collider);
+    hit = hit || checkCollision(collider, playerColider);
+    if (hit) {
+      printf("hit\n");
+    }
   }
 }
 
@@ -76,6 +103,8 @@ unsigned int Scene::addGameObject(int x, int y, std::string texturePath) {
   mIndexLookUp[id] = mGameObjects.size();
   mGameObjects.emplace_back(x, y);
   mGameObjects.back().setTexture(texturePath, mRenderer);
+  mGameObjects.back().setCollider(mGameObjects.back().getWidth(),
+                                  mGameObjects.back().getHeight());
 
   return id;
 }

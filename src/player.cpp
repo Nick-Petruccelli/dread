@@ -3,6 +3,7 @@
 #include "../inc/scene.h"
 #include "../inc/window.h"
 #include <cmath>
+#include <pthread.h>
 
 extern Window gWindow;
 extern Scene gScene;
@@ -77,4 +78,6 @@ void Player::move() {
   if (mPosY < 0 || mPosY > gScene.getMapHeight() - mTexture.getHeight()) {
     mPosY -= velAdjustY;
   }
+  mCollider.x = mPosX;
+  mCollider.y = mPosY;
 }
