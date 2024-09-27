@@ -2,6 +2,7 @@
 #include <SDL2/SDL_render.h>
 
 GameObject::GameObject() {}
+GameObject::GameObject(int x, int y) : mPosX(x), mPosY(y) {}
 
 GameObject::~GameObject() {}
 
@@ -32,8 +33,6 @@ void GameObject::setCollider(int xOff, int yOff, int w, int h) {
   mCollider.w = w;
   mCollider.h = h;
 }
-
-void GameObject::setID(unsigned int id) { mID = id; }
 
 void GameObject::render(int *camOffSet) {
   if (mTexture.isLoaded()) {

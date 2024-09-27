@@ -2,7 +2,6 @@
 #include <SDL2/SDL_events.h>
 #include <fstream>
 #include <string>
-#include <typeinfo>
 
 Scene::Scene() { mRenderer = NULL; }
 
@@ -40,7 +39,7 @@ bool Scene::addMap(std::string path) {
 void Scene::handelEvents(SDL_Event e) {
   mPlayer.handelEvents(e);
   for (unsigned int i = 0; i < mGameObjects.size(); i++) {
-    mGameObjects[i]->handelEvents(e);
+    mGameObjects[i].handelEvents(e);
   }
 }
 
@@ -49,7 +48,7 @@ void Scene::updateSceneState() {
   mCamera.moveTo(mPlayer.getPosX() + mPlayer.getWidth() / 2.0,
                  mPlayer.getPosY() + mPlayer.getHeight() / 2.0);
   for (unsigned int i = 0; i < mGameObjects.size(); i++) {
-    mGameObjects[i]->updateState();
+    mGameObjects[i].updateState();
   }
 }
 
@@ -57,24 +56,34 @@ void Scene::renderScene() {
   int *camOffSet = mCamera.getOffSet();
   mMap.render(0, 0, camOffSet);
   mPlayer.render(camOffSet);
-  /*
   for (unsigned int i = 0; i < mGameObjects.size(); i++) {
-    mGameObjects[i]->render();
+    mGameObjects[i].render(camOffSet);
   }
-       */
   delete camOffSet;
 }
 
-unsigned int Scene::addGameObject(GameObject *obj) {
-  obj->setID(mGameObjects.size());
-  mGameObjects.push_back(obj);
-  return obj->getID();
+unsigned int Scene::addGameObject(int x, int y, std::string texturePath) {
+  unsigned int id;
+  if (mFreeIDs.empty()) {
+    id = mGameObjects.size();
+  } else {
+    id = mFreeIDs.top();
+    mFreeIDs.pop();
+  }
+  if (id >= mIndexLookUp.size()) {
+    mIndexLookUp.reserve(1);
+  }
+  mIndexLookUp[id] = mGameObjects.size();
+  mGameObjects.emplace_back(x, y);
+  mGameObjects.back().setTexture(texturePath, mRenderer);
+
+  return id;
 }
 
 void Scene::removeGameObject(unsigned int objID) {
   unsigned int idx = getIndex(objID);
   std::swap(mGameObjects[idx], mGameObjects.back());
-  mIndexLookUp[mGameObjects[idx]->getID()] = idx;
+  mIndexLookUp[mGameObjects[idx].getID()] = idx;
   mFreeIDs.push(objID);
 }
 

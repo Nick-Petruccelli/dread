@@ -44,6 +44,7 @@ int main(int argc, char *args[]) {
   gScene = Scene(gRenderer);
   gScene.addMap("assets/background.png");
   gScene.addPlayer("assets/objData/player.txt");
+  gScene.addGameObject(100, 100, "assets/wall.png");
 
   int framesScinceLast = 0;
   unsigned int timeScinceLast = SDL_GetTicks();

@@ -17,7 +17,7 @@ public:
   bool addPlayer(std::string name);
   bool addMap(std::string name);
   void removePlayer();
-  unsigned int addGameObject(GameObject *obj);
+  unsigned int addGameObject(int x, int y, std::string texturePath);
   void removeGameObject(unsigned int objID);
   void handelEvents(SDL_Event e);
   void updateSceneState();
@@ -33,7 +33,7 @@ private:
   Camera mCamera;
   Player mPlayer;
   Texture mMap;
-  std::vector<GameObject *> mGameObjects;
+  std::vector<GameObject> mGameObjects;
   std::vector<unsigned int> mIndexLookUp;
   std::stack<unsigned int> mFreeIDs;
 };

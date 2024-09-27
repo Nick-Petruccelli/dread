@@ -8,12 +8,12 @@
 class GameObject {
 public:
   GameObject();
+  GameObject(int x, int y);
   ~GameObject();
   bool setTexture(std::string path, SDL_Renderer *renderer);
   void setPosition(float x, float y);
   void setCollider(int w, int h);
   void setCollider(int xOff, int yOff, int w, int h);
-  void setID(unsigned int id);
   virtual void handelEvents(SDL_Event e){};
   virtual void updateState(){};
   void render(int *camOffSet);
