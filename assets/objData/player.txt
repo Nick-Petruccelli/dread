@@ -1,2 +1,2 @@
-Texture: assets/character.png
+Texture: assets/textures/character.png
 MaxVel: 500

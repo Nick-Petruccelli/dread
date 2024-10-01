@@ -1,5 +1,6 @@
 #include "../inc/engine.h"
 #include "../inc/scene.h"
+#include "../inc/tileMap.h"
 #include "../inc/ui.h"
 #include "../inc/window.h"
 #include <SDL2/SDL.h>
@@ -36,15 +37,16 @@ int main(int argc, char *args[]) {
     return -1;
   }
 
+  TileMap tm = TileMap("assets/tileMapData/testTileMap.txt");
   UI ui;
   ui.setFont("assets/fonts/OpenSans-Regular.ttf");
   ui.addTextElement(0, 0, "FPS: ", {0, 0, 0, 255});
   ui.addTextElement(55, 0, "00", {0, 0, 0, 255});
 
   gScene = Scene(gRenderer);
-  gScene.addMap("assets/background.png");
+  gScene.addMap("assets/textures/background.png");
   gScene.addPlayer("assets/objData/player.txt");
-  gScene.addGameObject(100, 100, "assets/wall.png");
+  gScene.addGameObject(100, 100, "assets/textures/wall.png");
 
   int framesScinceLast = 0;
   unsigned int timeScinceLast = SDL_GetTicks();

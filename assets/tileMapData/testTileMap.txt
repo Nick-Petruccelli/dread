@@ -1,0 +1,8 @@
+NumTiles: 10
+PathToTexture: "assets/textures/testTileMap.png"
+Tile 1 Rect: 0, 0, 50, 50
+Tile 2 Rect: 0, 50, 50, 50
+Tile 3 Rect: 0, 100, 50, 50
+Tile 4 Rect: 50, 0, 50, 50
+Tile 5 Rect: 50, 50, 50, 50
+Tile 6 Rect: 50, 100, 50, 50
